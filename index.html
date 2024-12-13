@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Countdown Timers</title>
+        <style>
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                width: 100%;
+                font-family: sans-serif;
+                background: #f0f0f0;
+            }
+
+            /* Container for initial buttons */
+            .button-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+
+            button {
+                margin: 20px;
+                padding: 20px 40px;
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+
+            /* Fullscreen countdown display */
+            .countdown-display {
+                display: none;
+                justify-content: center;
+                align-items: center;
+                background: #000;
+                color: #fff;
+                font-size: 15vw;
+                font-weight: bold;
+                height: 100vh;
+                width: 100vw;
+                text-align: center;
+            }
+
+            /* Flash animation when done */
+            @keyframes flash {
+                0% {
+                    background: #000;
+                    color: #fff;
+                }
+                50% {
+                    background: #fff;
+                    color: #000;
+                }
+                100% {
+                    background: #000;
+                    color: #fff;
+                }
+            }
+
+            .flash {
+                animation: flash 0.5s alternate infinite;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="button-container">
+            <button data-seconds="120">2 min</button>
+            <button data-seconds="40">40 s</button>
+            <button data-seconds="10">10 s</button>
+        </div>
+
+        <div class="countdown-display"></div>
+
+        <script>
+            const buttons = document.querySelectorAll("button[data-seconds]");
+            const display = document.querySelector(".countdown-display");
+            const buttonContainer = document.querySelector(".button-container");
+
+            let intervalId = null;
+
+            // Convert seconds to mm:ss
+            function formatTime(seconds) {
+                const m = Math.floor(seconds / 60);
+                const s = seconds % 60;
+                return `${m}:${s.toString().padStart(2, "0")}`;
+            }
+
+            buttons.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    const totalSeconds = parseInt(
+                        btn.getAttribute("data-seconds"),
+                        10
+                    );
+                    startCountdown(totalSeconds);
+                });
+            });
+
+            function startCountdown(timeLeft) {
+                // Hide buttons, show display
+                buttonContainer.style.display = "none";
+                display.style.display = "flex";
+                display.textContent = formatTime(timeLeft);
+
+                intervalId = setInterval(() => {
+                    timeLeft--;
+                    display.textContent = formatTime(timeLeft);
+                    if (timeLeft <= 0) {
+                        clearInterval(intervalId);
+                        countdownFinished();
+                    }
+                }, 1000);
+            }
+
+            function countdownFinished() {
+                // Start flashing for 5 seconds
+                display.classList.add("flash");
+                display.textContent = "0:00";
+                // After 5 seconds of flashing, stop flashing
+                setTimeout(() => {
+                    display.classList.remove("flash");
+                    // Reset to initial state
+                    display.style.display = "none";
+                    buttonContainer.style.display = "flex";
+                }, 5000);
+            }
+        </script>
+    </body>
+</html>
