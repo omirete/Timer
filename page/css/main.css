@@ -48,7 +48,7 @@ body {
     cursor: pointer;
     border: none;
     background: transparent;
-    color: red;
+    opacity: 30%;
     font-weight: bold;
 }
 
