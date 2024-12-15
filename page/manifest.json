@@ -2,6 +2,10 @@
     "id": "c64e8fe3-5f7f-47f0-8db5-6d1b5a70195c",
     "name": "Simple timers",
     "short_name": "Simple timers",
+    "description": "A minimalist web app for creating custom countdowns, going fullscreen during countdown, and offering a clear, flashing alert when time is up.",
+    "categories": ["timer", "countdown", "alarm"],
+    "lang": "en",
+    "dir": "ltr",
     "start_url": "./?utm_source=web_app_manifest",
     "display": "fullscreen",
     "background_color": "#f0f0f0",
@@ -455,11 +459,6 @@
         {
             "src": "media/icons/ios/1024.png",
             "sizes": "1024x1024"
-        }
-    ],
-    "related_applications": [
-        {
-            "platform": "web"
         }
     ]
 }
