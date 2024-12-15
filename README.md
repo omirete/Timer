@@ -14,8 +14,8 @@ A minimalist web app for creating and running customizable countdown timers.
 
 ## How to use
 
-1. **Add a timer:** Enter a duration in seconds and click **Add Timer**.
-2. **Start a timer:** Click any timer to start counting down.
+1. **Add a timer:** enter a duration in seconds and click **Add Timer**.
+2. **Start a timer:** click any timer to start counting down.
 3. **Cancel or wait until countdown finishes:** 
    - Press **x** to cancel during countdown.
    - When finished, the screen flashes for a few seconds, then returns to the timer list.
