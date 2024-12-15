@@ -37,11 +37,12 @@
                 align-items: center;
                 background: #000;
                 color: #fff;
-                font-size: 15vw;
+                font-size: 30vw;
                 font-weight: bold;
                 height: 100vh;
                 width: 100vw;
                 text-align: center;
+                position: relative;
             }
 
             /* Flash animation when done */
@@ -63,6 +64,20 @@
             .flash {
                 animation: flash 0.5s alternate infinite;
             }
+
+            /* Cancel (X) button */
+            .cancel-btn {
+                position: absolute;
+                top: 6px;
+                left: 6px;
+                font-size: 5rem;
+                /* font-weight: bold; */
+                color: #ffffff30;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                display: none;
+            }
         </style>
     </head>
     <body>
@@ -72,12 +87,17 @@
             <button data-seconds="10">10 s</button>
         </div>
 
-        <div class="countdown-display"></div>
+        <div class="countdown-display">
+            <button class="cancel-btn">×</button>
+            <div class="time-text"></div>
+        </div>
 
         <script>
             const buttons = document.querySelectorAll("button[data-seconds]");
             const display = document.querySelector(".countdown-display");
+            const timeText = document.querySelector(".time-text");
             const buttonContainer = document.querySelector(".button-container");
+            const cancelBtn = document.querySelector(".cancel-btn");
 
             let intervalId = null;
 
@@ -98,15 +118,18 @@
                 });
             });
 
+            cancelBtn.addEventListener("click", cancelCountdown);
+
             function startCountdown(timeLeft) {
-                // Hide buttons, show display
+                // Hide buttons, show display and cancel button
                 buttonContainer.style.display = "none";
                 display.style.display = "flex";
-                display.textContent = formatTime(timeLeft);
+                cancelBtn.style.display = "block";
+                timeText.textContent = formatTime(timeLeft);
 
                 intervalId = setInterval(() => {
                     timeLeft--;
-                    display.textContent = formatTime(timeLeft);
+                    timeText.textContent = formatTime(timeLeft);
                     if (timeLeft <= 0) {
                         clearInterval(intervalId);
                         countdownFinished();
@@ -115,16 +138,27 @@
             }
 
             function countdownFinished() {
-                // Start flashing for 5 seconds
                 display.classList.add("flash");
-                display.textContent = "0:00";
-                // After 5 seconds of flashing, stop flashing
+                timeText.textContent = "0:00";
+                // After 5 seconds of flashing, stop flashing and reset
                 setTimeout(() => {
-                    display.classList.remove("flash");
-                    // Reset to initial state
-                    display.style.display = "none";
-                    buttonContainer.style.display = "flex";
+                    resetUI();
                 }, 5000);
+            }
+
+            function cancelCountdown() {
+                // If an interval is running, clear it
+                if (intervalId) {
+                    clearInterval(intervalId);
+                }
+                resetUI();
+            }
+
+            function resetUI() {
+                display.classList.remove("flash");
+                display.style.display = "none";
+                cancelBtn.style.display = "none";
+                buttonContainer.style.display = "flex";
             }
         </script>
     </body>
