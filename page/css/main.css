@@ -1,0 +1,122 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: sans-serif;
+    background: #f0f0f0;
+}
+
+/* Container for initial buttons */
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    justify-content: center;
+}
+
+/* Custom timers container */
+.custom-timers {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px;
+    align-items: center;
+}
+
+.custom-timers button.start-timer {
+    margin: 10px;
+    padding: 20px 40px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Each individual timer item */
+.custom-timer-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Remove timer button */
+.custom-timer-item button.remove-timer {
+    font-size: 1.2rem;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: red;
+    font-weight: bold;
+}
+
+/* Add timer form */
+.add-timer-form {
+    display: flex;
+    margin-top: 20px;
+}
+
+.add-timer-form input {
+    padding: 10px;
+    font-size: 1rem;
+    margin-right: 10px;
+    width: 100px;
+    text-align: center;
+}
+
+.add-timer-form button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* Fullscreen countdown display */
+.countdown-display {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+    color: #fff;
+    font-size: 15vw;
+    font-weight: bold;
+    height: 100vh;
+    width: 100vw;
+    text-align: center;
+    position: relative;
+}
+
+/* Flash animation when done */
+@keyframes flash {
+    0% {
+        background: #000;
+        color: #fff;
+    }
+    50% {
+        background: #fff;
+        color: #000;
+    }
+    100% {
+        background: #000;
+        color: #fff;
+    }
+}
+
+.flash {
+    animation: flash 0.5s alternate infinite;
+}
+
+/* Cancel (X) button */
+.cancel-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 3rem;
+    font-weight: bold;
+    color: #fff;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: none;
+}
