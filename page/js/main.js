@@ -167,3 +167,13 @@ function formatTime(seconds) {
     const s = seconds % 60;
     return `${m}:${s.toString().padStart(2, "0")}`;
 }
+
+/**
+ * Register service worker
+ */
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(() => console.log('Service Worker Registered'))
+      .catch(err => console.error('Service Worker Registration Failed:', err));
+  }
+  
