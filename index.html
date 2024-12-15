@@ -18,15 +18,63 @@
             /* Container for initial buttons */
             .button-container {
                 display: flex;
-                justify-content: center;
+                flex-direction: column;
                 align-items: center;
                 height: 100vh;
+                justify-content: center;
             }
 
-            button {
+            .custom-timers {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
                 margin: 20px;
+            }
+
+            .custom-timers button.start-timer {
+                margin: 10px;
                 padding: 20px 40px;
                 font-size: 1.5rem;
+                cursor: pointer;
+                position: relative;
+            }
+
+            .custom-timers {
+                align-items: center;
+            }
+
+            .custom-timer-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .custom-timer-item button.remove-timer {
+                font-size: 1.2rem;
+                cursor: pointer;
+                border: none;
+                background: transparent;
+                color: red;
+                font-weight: bold;
+            }
+
+            .add-timer-form {
+                display: flex;
+                margin-top: 20px;
+            }
+
+            .add-timer-form input {
+                padding: 10px;
+                font-size: 1rem;
+                margin-right: 10px;
+                width: 100px;
+                text-align: center;
+            }
+
+            .add-timer-form button {
+                padding: 10px 20px;
+                font-size: 1rem;
                 cursor: pointer;
             }
 
@@ -37,7 +85,7 @@
                 align-items: center;
                 background: #000;
                 color: #fff;
-                font-size: 30vw;
+                font-size: 15vw;
                 font-weight: bold;
                 height: 100vh;
                 width: 100vw;
@@ -68,11 +116,11 @@
             /* Cancel (X) button */
             .cancel-btn {
                 position: absolute;
-                top: 6px;
-                left: 6px;
-                font-size: 5rem;
-                /* font-weight: bold; */
-                color: #ffffff30;
+                top: 10px;
+                left: 10px;
+                font-size: 3rem;
+                font-weight: bold;
+                color: #fff;
                 background: transparent;
                 border: none;
                 cursor: pointer;
@@ -82,40 +130,99 @@
     </head>
     <body>
         <div class="button-container">
-            <button data-seconds="120">2 min</button>
-            <button data-seconds="40">40 s</button>
-            <button data-seconds="10">10 s</button>
+            <div class="custom-timers"></div>
+
+            <form class="add-timer-form">
+                <input
+                    type="number"
+                    min="1"
+                    name="timer-seconds"
+                    placeholder="Seconds"
+                    required
+                />
+                <button type="submit">Add Timer</button>
+            </form>
         </div>
 
         <div class="countdown-display">
-            <button class="cancel-btn">×</button>
+            <button class="cancel-btn">x</button>
             <div class="time-text"></div>
         </div>
 
         <script>
-            const buttons = document.querySelectorAll("button[data-seconds]");
+            const customTimersContainer =
+                document.querySelector(".custom-timers");
             const display = document.querySelector(".countdown-display");
             const timeText = document.querySelector(".time-text");
             const buttonContainer = document.querySelector(".button-container");
             const cancelBtn = document.querySelector(".cancel-btn");
+            const addTimerForm = document.querySelector(".add-timer-form");
+            const timerInput = addTimerForm.querySelector(
+                'input[name="timer-seconds"]'
+            );
 
             let intervalId = null;
+            let customTimers = [];
 
-            // Convert seconds to mm:ss
-            function formatTime(seconds) {
-                const m = Math.floor(seconds / 60);
-                const s = seconds % 60;
-                return `${m}:${s.toString().padStart(2, "0")}`;
+            // Load custom timers from localStorage
+            function loadCustomTimers() {
+                const stored = localStorage.getItem("customTimers");
+                customTimers = stored ? JSON.parse(stored) : [];
+                renderCustomTimers();
             }
 
-            buttons.forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    const totalSeconds = parseInt(
-                        btn.getAttribute("data-seconds"),
-                        10
-                    );
-                    startCountdown(totalSeconds);
+            function saveCustomTimers() {
+                localStorage.setItem(
+                    "customTimers",
+                    JSON.stringify(customTimers)
+                );
+            }
+
+            function renderCustomTimers() {
+                // Clear current displayed custom timers
+                customTimersContainer.innerHTML = "";
+                customTimers.forEach((seconds, index) => {
+                    const itemDiv = document.createElement("div");
+                    itemDiv.classList.add("custom-timer-item");
+
+                    const startBtn = document.createElement("button");
+                    startBtn.classList.add("start-timer");
+                    startBtn.setAttribute("data-seconds", seconds);
+                    startBtn.textContent = formatTimeNatural(seconds);
+
+                    const removeBtn = document.createElement("button");
+                    removeBtn.classList.add("remove-timer");
+                    removeBtn.textContent = "x";
+
+                    removeBtn.addEventListener("click", () => {
+                        removeCustomTimer(index);
+                    });
+
+                    startBtn.addEventListener("click", () => {
+                        startCountdown(seconds);
+                    });
+
+                    itemDiv.appendChild(startBtn);
+                    itemDiv.appendChild(removeBtn);
+                    customTimersContainer.appendChild(itemDiv);
                 });
+            }
+
+            function removeCustomTimer(index) {
+                customTimers.splice(index, 1);
+                saveCustomTimers();
+                renderCustomTimers();
+            }
+
+            addTimerForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const val = parseInt(timerInput.value, 10);
+                if (val > 0) {
+                    customTimers.push(val);
+                    saveCustomTimers();
+                    renderCustomTimers();
+                    timerInput.value = "";
+                }
             });
 
             cancelBtn.addEventListener("click", cancelCountdown);
@@ -160,6 +267,47 @@
                 cancelBtn.style.display = "none";
                 buttonContainer.style.display = "flex";
             }
+
+            // Convert seconds to mm:ss
+            function formatTimeNatural(seconds) {
+                const hrs = Math.floor(seconds / 3600);
+                const remainderAfterHours = seconds % 3600;
+                const mins = Math.floor(remainderAfterHours / 60);
+                const secs = remainderAfterHours % 60;
+
+                if (hrs > 0) {
+                    // Hours present
+                    if (mins > 0 && secs > 0) {
+                        return `${hrs} h ${mins} m ${secs} s`;
+                    } else if (mins > 0) {
+                        return `${hrs} h ${mins} m`;
+                    } else if (secs > 0) {
+                        return `${hrs} h ${secs} s`;
+                    } else {
+                        return `${hrs} h`;
+                    }
+                } else if (mins > 0) {
+                    // Only minutes and maybe seconds
+                    if (secs > 0) {
+                        return `${mins} min ${secs} s`;
+                    } else {
+                        return `${mins} min`;
+                    }
+                } else {
+                    // Only seconds
+                    return `${secs} s`;
+                }
+            }
+
+            // Convert seconds to mm:ss
+            function formatTime(seconds) {
+                const m = Math.floor(seconds / 60);
+                const s = seconds % 60;
+                return `${m}:${s.toString().padStart(2, '0')}`;
+            }
+
+            // Initialize
+            loadCustomTimers();
         </script>
     </body>
 </html>
